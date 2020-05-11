@@ -10,7 +10,7 @@ login_manager.login_view = 'authentication.login'
 db = SQLAlchemy()
 
 def create_app(config_name):
-    app = Flask(__name__)
+    app = Flask(__name__,instance_relative_config=True)
 
     from .authentication import authentication as authentication_blueprint
     app.register_blueprint(authentication_blueprint,url_prefix = '/auth')

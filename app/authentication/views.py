@@ -2,7 +2,7 @@ from flask import render_template
 from . import authentication
 from ..models import User
 from .forms import SignUpForm,LoginForm
-from flask_login import login_user
+from flask_login import login_user,logout_user,login_required
 from .. import db
 
 @authentication.route('/login',methods=['GET','POST'])
@@ -16,8 +16,8 @@ def login():
 
         flash('Invalid username or Password')
 
-    title = "Log in"
-    return render_template('auth/login.html',login_form=login_form,title=title)
+    
+    return render_template('auth/login.html',login_form=login_form)
 
 @authentication.route('/signup', methods = ['GET','POST'])
 def signup():
@@ -27,6 +27,11 @@ def signup():
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('authentication.login'))
-        title = "Sign Up"
-    return render_template('auth/signup.html',signup_form = form,title=title)
+        
+    return render_template('auth/signup.html',signup_form = form)
 
+@authentication.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("home.html"))#make this work

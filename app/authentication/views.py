@@ -17,4 +17,4 @@ def signup():
         db.session.commit()
         return redirect(url_for('authentication.login'))
         title = "Sign Up"
-    return render_template('authentication/register.html',signup_form = form)
+    return render_template('authentication/signup.html',signup_form = form)

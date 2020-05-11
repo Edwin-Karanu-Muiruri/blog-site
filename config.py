@@ -9,11 +9,13 @@ class DevConfig(Config):
     '''
     Development child config class
     '''
+    DEBUG = True
 
-class ProdConfig(COnfig):
+class ProdConfig(Config):
     '''
     Production config class
     '''
-
-production = 'ProdConfig'
-development = 'DevConfig'
+config_options = {
+    production = 'ProdConfig',
+    development = 'DevConfig'
+}

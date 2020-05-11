@@ -1,4 +1,4 @@
-from . import db
+from . import db 
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -10,3 +10,4 @@ class User(db.Model):
 
     def __repr__(self):
         return f'User {self.username}'
+        

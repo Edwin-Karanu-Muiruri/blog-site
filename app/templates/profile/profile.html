@@ -11,7 +11,10 @@
     {% if user.bio %}
       <p> {{user.bio}}</p>
     {%else%}
-      <p> Update your bio on the Update profile section </p>
+      <p> Update your bio below </p>
+    {% endif %}
+    {% if user == current_user %}
+    <a href="{{url_for('main.update_profile',uname=user.username)}}">Edit profile</a>
     {% endif %}
   </div>
 

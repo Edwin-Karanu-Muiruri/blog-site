@@ -16,6 +16,6 @@ class ProdConfig(Config):
     Production config class
     '''
 config_options = {
-    'production' = ProdConfig,
-    'development' = DevConfig
+    'production' :ProdConfig,
+    'development' :DevConfig
 }

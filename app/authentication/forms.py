@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,SubmitField,ValidatonError
+from wtforms import StringField,PasswordField,SubmitField,ValidatonError,BooleanField
 from wtforms.validators import Required,Email,EqualTo
 from ..models import User
 
@@ -17,3 +17,9 @@ class SignUpForm(FlaskForm):
     def validate_email(self,data_field):
         if User.query.filter_by(email = data_field.data).first():
             raise ValidatonError('There is an account with that email')
+
+class LoginForm(FlaskForm):
+    email = StringField('Your Email Address',validators=[Required(),Email()])
+    password = PasswordField('Password',validators =[Required()])
+    remember = BooleanField('Keep me signed in')
+    submit = SubmitField('Sign In')

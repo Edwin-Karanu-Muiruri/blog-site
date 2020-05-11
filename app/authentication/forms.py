@@ -1,0 +1,19 @@
+from flask_wtf import FlaskForm
+from wtforms import StringField,PasswordField,SubmitField,ValidatonError
+from wtforms.validators import Required,Email,EqualTo
+from ..models import User
+
+class SignUpForm(FlaskForm):
+    email = StringField('Enter a valid email address', validators=[Required(),Email()])
+    username = StringField('Enter your preferred username',validators=[Required()])
+    password = PasswordField('Enter an 8 character password',validators=[Required(),EqualTo('password_confirm',message='Passwords must match')])
+    password_confirm = PasswordField('Confirm  Password', validators=[Required()])
+    submit = SubmitField('Sign Up')
+
+    def validate_username(self,data_field):
+        if User.query.filter_by(username = data_field.data).first():
+            raise ValidatonError('That username is already taken')
+    
+    def validate_email(self,data_field):
+        if User.query.filter_by(email = data_field.data).first():
+            raise ValidatonError('There is an account with that email')

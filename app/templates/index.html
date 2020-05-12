@@ -10,7 +10,7 @@
                 <h3>{{blog.title}}</h3>
             </div>
             <div class="card-body">
-              <p class="card-text">{{blog.message}}</p>
+              <p class="card-text">{{blog.content}}</p>
                 <hr>
               <p class="card-text"> by: {{blog.user.username}}</p>
                 {% if current_user.is_authenticated %}

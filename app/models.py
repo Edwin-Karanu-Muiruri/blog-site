@@ -2,15 +2,18 @@ from . import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from . import login_manager
+from datetime import datetime
 
 class User(UserMixin,db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(255),index = True)
     email = db.Column(db.String(255),unique = True,index = True)
-    #might need a column for a foreign key
     bio = db.Column(db.String(255))
     psword = db.Column(db.String(255))
+    blogs = db.relationship("Blog", backref= "user", lazy="dynamic")
+    comments = db.relationship("Comment", backref= "user", lazy="dynamic")
+
 
     @property
     def password(self):
@@ -34,10 +37,38 @@ class User(UserMixin,db.Model):
 class Blog(db.Model):
     __tablename__ = 'blogs'
     id = db.Column(db.Integer,primary_key = True)
-    #writer = db.relationship()
     title = db.Column(db.String(255))
     content = db.Column(db.String())
-    #comments = db.relationship()
+    posted = db.Column(db.DateTime,default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    comments = db.relationship("Comment", backref = "blog", lazy = "dynamic")
+
+    def delete_blog(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def get_comments(self):
+        blog = Blog.query.filter_by(id = self.id).first()
+        comments = Comment.query.filter_by(blog_id = blog.id).order_by(Comment.posted.desc())
+        return comments
 
     def __repr__(self):
         return f'Blog {self.content}'
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key = True)
+    blog_id = db.Column(db.Integer, db.ForeignKey("blogs.id"))
+    title = db.Column(db.String(255))
+    comment = db.Column(db.String(255))
+    posted = db.Column(db.DateTime,default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    @classmethod
+    def get_comments(cls, id):
+        comments = Comment.query.filter_by(blog_id = id).all()
+        return comments
+
+    def delete_comment(self):
+        db.session.delete(self)
+        db.session.commit()

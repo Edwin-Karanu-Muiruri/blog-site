@@ -1,9 +1,10 @@
 from flask import render_template,request,redirect,url_for,abort
 from flask_login import login_required,current_user
-from ..models import User,Blog,Comment
+from ..models import User,Blog,Comment,Quote
 from .forms import UpdateProfile,CommentForm,BloggingForm
 from .. import db
 from . import main
+from ..requests import get_quote
 
 
 #application views
@@ -13,17 +14,18 @@ def index():
     Root page view function that returns the index page and its data
     '''
     title = 'Blog Spot'
+    quote = get_quote()
     blogs = Blog.query.all()
-    return render_template('index.html',title=title,blogs=blogs)
+    return render_template('index.html',title=title,quote = quote, blogs=blogs)
 
 @main.route('/user/<uname>')
 def profile(uname):
     user = User.query.filter_by(username = uname).first()
-    blogs = Blog.query.filter_by(user_id = Blog.user_id).order_by(Blog.posted.desc())
+    blogs = Blog.query.filter_by(user_id = user.id).order_by(Blog.posted.desc())
     if user is None:
         abort(404)
-    elif user is not None:
-        return render_template("profile/profile.html", user = user,blogs=blogs)
+
+    return render_template("profile/profile.html", user = user,blogs=blogs)
 
 @main.route('/user/<uname>/update',methods = ['GET','POST'])
 @login_required
@@ -56,7 +58,7 @@ def new_blog(uname):
 
     if form.validate_on_submit():
         blog.title = form.title.data
-        blog.blogpost = form.post.data
+        blog.content = form.content.data
         blog.user_id = current_user.id
 
 
@@ -68,7 +70,7 @@ def new_blog(uname):
     return render_template('new_blog.html',uname = uname, user = user, BloggingForm = form)
 
 
-@main.route('/user/<uname>/delete/<blog_id>')
+@main.route('/user/<uname>/delete/<id>/blog')
 @login_required
 def del_blog(uname, blog_id):
     user = User.query.filter_by(username = uname).first()
@@ -80,7 +82,7 @@ def del_blog(uname, blog_id):
 
     return render_template("profile/profile.html", user = user, blogs = blogs)
 
-@main.route('/blog/comment/new/<blog_id>', methods = ['GET', 'POST'])
+@main.route('/comments/<blog_id>/new', methods = ['GET', 'POST'])
 @login_required
 def new_comment(blog_id):
     form = CommentForm()
@@ -88,9 +90,8 @@ def new_comment(blog_id):
     comment = Comment()
 
     if form.validate_on_submit():
-        comment.title = form.title.data
         comment.comment = form.comment.data
-        comment.blog_id = blog_id
+        comment.blog_id = blog.id
         comment.user_id = current_user.id
 
         db.session.add(comment)

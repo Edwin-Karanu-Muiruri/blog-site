@@ -3,32 +3,28 @@
 {% block content %}
   <div class="container">
     <div class="row">
-  <!-- displaying  Username-->
       <div class="col-md-4">
         <h3> {{user.username| capitalize}} </h3>
-
-  <!--Displaying user bio-->
-      {% if user.bio %}
+        {% if user.bio %}
         <p> {{user.bio}}</p>
-      {%else%}
+        {%else%}
         <p> Update your bio below </p>
-      {% endif %}
+        {% endif %}
       
-      {% if user == current_user %}
+        {% if user == current_user %}
         <a href="{{url_for('main.update_profile',uname=user.username)}}">Edit profile</a>
-      {% endif %}
-    </div>
+        {% endif %}
+      </div>
+    
 
-    <!--Display blogs-->
-    <div class="col-md-4">
-      <h3>Your Blogs</h3>
-      {% if user.blogs %}
-        <p> {{user.blogs}}</p>
-      {%else%}
-        <p> You do not have any blogs yet. Create one?{% if user.bio %}</p>
-      {% endif %} 
-    </div>
+      <div class="col-md-4">
+        <h3>Your Blogs</h3>
+        {% if user.blogs %}
+        <p> {{user.blogs.user_id}}</p>
+        {%else%}
+        <p> You do not have any blogs yet. You can create one at the top of the page.</p>
+        {% endif %} 
+      </div>
     </div>
   </div>
-{% endif %}
 {% endblock %}

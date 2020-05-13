@@ -59,7 +59,6 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     blog_id = db.Column(db.Integer, db.ForeignKey("blogs.id"))
-    title = db.Column(db.String(255))
     comment = db.Column(db.String(255))
     posted = db.Column(db.DateTime,default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -72,3 +71,8 @@ class Comment(db.Model):
     def delete_comment(self):
         db.session.delete(self)
         db.session.commit()
+
+class Quote:
+    def __init__(self, author, quote):
+        self.author = author
+        self.quote = quote
